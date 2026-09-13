@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartPark — sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <div class="login-shell">
+    <section class="login-hero">
+      <div class="brand-mark"><span class="slash"></span> SMARTPARK</div>
+      <h1>Parking, Simplified</h1>
+      <p>More ease in every lot</p>
+    </section>
+    <section class="login-panel">
+      <h2>Pick a desk</h2>
+      <div class="roles">
+        <button type="button" class="role" data-user="admin" data-pass="admin123">
+          <b>HQ admin</b><small>All five sites, money, watchlist</small>
+        </button>
+        <button type="button" class="role" data-user="kajal" data-pass="kajal123">
+          <b>Mall manager</b><small>Kajal · Nexus Mall Hyderabad</small>
+        </button>
+        <button type="button" class="role" data-user="samantha" data-pass="samantha123">
+          <b>Society manager</b><small>Samantha · My Home Bhooja</small>
+        </button>
+        <button type="button" class="role" data-user="nani" data-pass="nani123">
+          <b>Car owner</b><small>Nani · TS 07 FK 4291 · Skoda Kushaq</small>
+        </button>
+      </div>
+      <form id="login-form">
+        <div class="field">
+          <label>Username</label>
+          <input name="username" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <div class="err" id="login-err">{{ error or "" }}</div>
+        <button class="btn btn-ink btn-block" type="submit">Enter the lot →</button>
+      </form>
+    </section>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

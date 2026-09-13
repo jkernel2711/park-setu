@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}SmartPark · {{ vehicle.plate }}{% endblock %}
+{% block content %}
+<div data-page="user">
+  <div class="top">
+    <div>
+      <div class="muted">Owner desk</div>
+      <h1 id="u-name">{{ vehicle.owner_name }}</h1>
+      <div class="sub" id="u-car">{{ vehicle.color }} {{ vehicle.model }}</div>
+    </div>
+    <form class="search right" id="user-lookup">
+      <input id="user-plate" value="{{ vehicle.plate }}" maxlength="13">
+      <button class="btn btn-ink" type="submit">Look up plate</button>
+    </form>
+  </div>
+  <section class="kpis">
+    <div class="kpi"><div class="lbl">Plate</div><div class="val" style="font-size:22px"><span class="plate">{{ vehicle.plate }}</span></div><div class="hint" id="u-tag"></div></div>
+    <div class="kpi"><div class="lbl">FASTag wallet</div><div class="val" id="u-fastag">—</div><div class="hint">pulled at mall exit</div></div>
+    <div class="kpi"><div class="lbl">This month spent</div><div class="val" id="u-spend">—</div><div class="hint">last 30 days across sites</div></div>
+    <div class="kpi"><div class="lbl">Visits</div><div class="val" id="u-visits">—</div><div class="hint">completed stays</div></div>
+  </section>
+  <section class="today-strip" id="today-strip">
+    <div class="cell"><div class="lbl">Visits this month</div><b id="t-in">—</b><small>completed stays</small></div>
+    <div class="cell"><div class="lbl">Month spend</div><b id="t-fee">—</b><small>FASTag + counter</small></div>
+    <div class="cell"><div class="lbl">Avg stay</div><b id="t-avg">—</b><small>your last 30 days</small></div>
+    <div class="cell"><div class="lbl">Last exit paid</div><b id="t-out">—</b><small id="t-out-sub">—</small></div>
+    <div class="cell"><div class="lbl">FASTag left</div><b id="t-live">—</b><small>wallet remaining</small></div>
+    <div class="cell"><div class="lbl">Status</div><b id="t-free">—</b><small id="t-free-sub">where you are</small></div>
+  </section>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Right now</h3>
+    <p id="u-live" class="muted">Checking…</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Where the money went</h3>
+      <div class="sites" id="u-locs"></div>
+    </div>
+    <div class="card">
+      <h3>Invite someone to My Home Bhooja</h3>
+      <p class="muted">You live in B-704, Gachibowli. Samantha at the society desk has to approve before the boom opens.</p>
+      <form id="pass-form">
+        <div class="field"><label>Visitor name</label><input name="visitor_name" required></div>
+        <div class="field"><label>Phone</label><input name="visitor_phone" placeholder="+91"></div>
+        <div class="field"><label>Their plate</label><input name="plate" placeholder="KA 03 XY 4410" required></div>
+        <div class="field"><label>Purpose</label><input name="purpose" value="Family visit"></div>
+        <div class="field"><label>Date</label><input name="visit_date" type="date" required></div>
+        <div style="display:flex;gap:8px">
+          <div class="field" style="flex:1"><label>From</label><input name="window_from" type="time" value="16:00"></div>
+          <div class="field" style="flex:1"><label>To</label><input name="window_to" type="time" value="21:00"></div>
+        </div>
+        <button class="btn btn-yellow" type="submit">Send pass request</button>
+      </form>
+    </div>
+  </div>
+  <section class="period-board" id="period-board">
+    <div class="period-card">
+      <h4>Today</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Visits</div><b id="p1-in">—</b></div>
+        <div><div class="lbl">Spent</div><b id="p1-fee">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p1-avg">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p1-out">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 7 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Visits</div><b id="p7-in">—</b></div>
+        <div><div class="lbl">Spent</div><b id="p7-fee">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p7-avg">—</b></div>
+        <div><div class="lbl">Exits</div><b id="p7-out">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 30 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Visits</div><b id="p30-in">—</b></div>
+        <div><div class="lbl">Spent</div><b id="p30-fee">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p30-avg">—</b></div>
+        <div><div class="lbl">Exits</div><b id="p30-out">—</b></div>
+      </div>
+    </div>
+  </section>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Guests I invited to Bhooja</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Visitor</th><th>Plate</th><th>Purpose</th><th>When</th><th>Status</th></tr></thead>
+        <tbody id="u-invites"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Hyderabad stays</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Where</th><th>In / out</th><th>Duration</th><th>Paid</th><th>How</th></tr></thead>
+        <tbody id="u-hist"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

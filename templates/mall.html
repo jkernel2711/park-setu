@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}SmartPark · {{ location.name }}{% endblock %}
+{% block content %}
+<div data-page="mall">
+  <div class="top">
+    <div>
+      <div class="muted">{{ location.city }} · mall boom</div>
+      <h1>{{ location.name }}</h1>
+      <div class="sub">First {{ location.free_minutes }} min free · ₹{{ location.hourly_rate_inr|int }}/hr · cap ₹{{ location.daily_cap_inr|int }} · SUV × {{ location.suv_multiplier }}</div>
+    </div>
+  </div>
+  <section class="kpis">
+    <div class="kpi"><div class="lbl">Inside now</div><div class="val" id="k-live">—</div><div class="hint">of {{ location.total_spots }} bays</div></div>
+    <div class="kpi"><div class="lbl">Open bays</div><div class="val" id="k-free">—</div><div class="hint">assign at the boom</div></div>
+    <div class="kpi"><div class="lbl">30-day take</div><div class="val" id="k-rev">—</div><div class="hint">FASTag share <span id="k-fastag">—</span></div></div>
+    <div class="kpi alert"><div class="lbl">Overstay &gt; 4h</div><div class="val" id="k-over">—</div><div class="hint">still sitting past four hours</div></div>
+  </section>
+  <section class="today-strip" id="today-strip">
+    <div class="cell"><div class="lbl">In today</div><b id="t-in">—</b><small>cars entered</small></div>
+    <div class="cell"><div class="lbl">Out today</div><b id="t-out">—</b><small>cars left</small></div>
+    <div class="cell"><div class="lbl">Avg stay</div><b id="t-avg">—</b><small>completed today</small></div>
+    <div class="cell"><div class="lbl">Fees collected</div><b id="t-fee">—</b><small>exits paid today</small></div>
+    <div class="cell"><div class="lbl">Still inside</div><b id="t-live">—</b><small>running fare ticking</small></div>
+    <div class="cell"><div class="lbl">Bays left</div><b id="t-free">—</b><small>of {{ location.total_spots }}</small></div>
+    <div class="cell"><div class="lbl">Overstay &gt;4h</div><b id="t-over">—</b><small>still sitting</small></div>
+  </section>
+  <section class="period-board" id="period-board">
+    <div class="period-card">
+      <h4>Today</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p1-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p1-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p1-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p1-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p1-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p1-fee">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 7 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p7-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p7-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p7-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p7-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p7-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p7-fee">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 30 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p30-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p30-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p30-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p30-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p30-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p30-fee">—</b></div>
+      </div>
+    </div>
+  </section>
+  <div class="grid-split">
+    <div class="card gate">
+      <h3>Gate console</h3>
+      <input type="hidden" id="gate-loc" value="{{ location.id }}">
+      <input id="plate-input" placeholder="MH 12 AB 1234" maxlength="13" autocomplete="off">
+      <div class="lookup" id="lookup">Type a plate, click a bay, or hit “car at boom”.</div>
+      <div class="gate-actions">
+        <button class="btn btn-go" id="btn-in">Entry</button>
+        <button class="btn btn-stop" id="btn-out">Exit &amp; charge</button>
+        <button class="btn btn-yellow" id="btn-sim" type="button">Car at boom</button>
+      </div>
+      <p class="muted">FASTag auto-debits on exit. No tag / low balance → UPI or cash at the boom.</p>
+    </div>
+    <aside class="inspect" id="bay-inspect">
+      <h3>Bay</h3>
+      <div class="empty">Click a stall on the map. Occupied bays show the car, in-time, stay, and running fee.</div>
+    </aside>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-head">
+      <h3>Bay map</h3>
+      <span class="muted">Click a stall · yellow = selected</span>
+    </div>
+    <div class="lot-board" id="slot-map"></div>
+    <div class="legend">
+      <span><i style="background:#e7f6ee"></i> free</span>
+      <span><i style="background:#1c1a17"></i> occupied</span>
+      <span><i style="background:#f5c400"></i> car in bay</span>
+      <span><i style="background:#1e4b86"></i> EV</span>
+      <span><i style="background:#c45c26"></i> accessible</span>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card">
+      <h3>Last 30 days</h3>
+      <div class="chart-box"><canvas id="daily-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Tape</h3>
+      <ul class="feed" id="feed"></ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Overstay — sitting past 4 hours</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Plate</th><th>Owner</th><th>Bay</th><th>Duration</th><th>Running fare</th><th>Tag</th></tr></thead>
+        <tbody id="overstay-table"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Who is inside</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Plate</th><th>Owner</th><th>Bay</th><th>Duration</th><th>Running fare</th><th>Tag</th></tr></thead>
+        <tbody id="parked-table"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

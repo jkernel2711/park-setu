@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}SmartPark · HQ{% endblock %}
+{% block content %}
+<div data-page="admin">
+  <div class="top">
+    <div>
+      <div class="muted">Network control</div>
+      <h1>Five sites. One picture.</h1>
+      <div class="sub">Hyderabad — Nexus · Inorbit · Sarath City · My Home Bhooja · My Home Avatar</div>
+    </div>
+  </div>
+  <section class="kpis">
+    <div class="kpi"><div class="lbl">Now inside</div><div class="val" id="k-live">—</div><div class="hint" id="k-live-hint">across the network</div></div>
+    <div class="kpi"><div class="lbl">Occupancy</div><div class="val" id="k-spots">—</div><div class="hint">filled / total bays</div></div>
+    <div class="kpi"><div class="lbl">30-day take</div><div class="val" id="k-rev">—</div><div class="hint" id="k-rev-hint">INR</div></div>
+    <div class="kpi"><div class="lbl">FASTag share</div><div class="val" id="k-fastag">—</div><div class="hint">of paid exits this month</div></div>
+  </section>
+  <section class="today-strip" id="today-strip">
+    <div class="cell"><div class="lbl">In today</div><b id="t-in">—</b><small>network entries</small></div>
+    <div class="cell"><div class="lbl">Out today</div><b id="t-out">—</b><small>network exits</small></div>
+    <div class="cell"><div class="lbl">Avg stay</div><b id="t-avg">—</b><small>completed today</small></div>
+    <div class="cell"><div class="lbl">Fees collected</div><b id="t-fee">—</b><small>paid at exit today</small></div>
+    <div class="cell"><div class="lbl">Still inside</div><b id="t-live">—</b><small>across five sites</small></div>
+    <div class="cell"><div class="lbl">Bays left</div><b id="t-free">—</b><small>open now</small></div>
+    <div class="cell"><div class="lbl">Overstay</div><b id="t-over">—</b><small>past 4 hours</small></div>
+  </section>
+  <section class="period-board" id="period-board">
+    <div class="period-card">
+      <h4>Today</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p1-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p1-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p1-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p1-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p1-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p1-fee">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 7 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p7-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p7-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p7-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p7-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p7-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p7-fee">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 30 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p30-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p30-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p30-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p30-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p30-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p30-fee">—</b></div>
+      </div>
+    </div>
+  </section>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Sites</h3>
+      <div class="sites" id="sites"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Last 30 days</h3></div>
+      <div class="chart-box"><canvas id="daily-chart"></canvas></div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card">
+      <h3>Currently parked (network)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Plate</th><th>Owner</th><th>Where</th><th>Duration</th><th>Running fare</th><th>Tag</th></tr></thead>
+          <tbody id="parked-table"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Live tape</h3>
+      <ul class="feed" id="feed"></ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

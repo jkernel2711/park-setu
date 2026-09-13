@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SmartPark{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand-mark"><span class="slash"></span> SMARTPARK</div>
+      {% if user.role == 'admin' %}
+        <a class="{{ 'active' if request.endpoint=='admin_desk' }}" href="{{ url_for('admin_desk') }}">Network</a>
+      {% elif user.role == 'mall_manager' %}
+        <a class="active" href="{{ url_for('mall_desk') }}">Mall desk</a>
+      {% elif user.role == 'community_manager' %}
+        <a class="active" href="{{ url_for('community_desk') }}">Society desk</a>
+      {% else %}
+        <a class="active" href="{{ url_for('user_desk') }}">My car</a>
+      {% endif %}
+      <div class="grow"></div>
+      <div class="who">
+        <b>{{ user.name }}</b>
+        {{ user.role.replace('_', ' ') }}
+        <div style="margin-top:10px"><a href="{{ url_for('logout') }}">Sign out</a></div>
+      </div>
+    </aside>
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <h3 id="modal-title">Slip</h3>
+      <div id="modal-body"></div>
+      <button class="btn btn-ink" data-close="modal" style="margin-top:14px;width:100%">Close</button>
+    </div>
+  </div>
+  <div class="toast-wrap" id="toast-wrap"></div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

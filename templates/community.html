@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}SmartPark · {{ location.name }}{% endblock %}
+{% block content %}
+<div data-page="community">
+  <div class="top">
+    <div>
+      <div class="muted">{{ location.city }} · gated society</div>
+      <h1>{{ location.name }}</h1>
+      <div class="sub">Residents free · approved visitors ₹{{ location.visitor_fee_inr|int }} · walk-in is double and needs override</div>
+    </div>
+  </div>
+  <section class="kpis">
+    <div class="kpi"><div class="lbl">Inside now</div><div class="val" id="k-live">—</div><div class="hint">of {{ location.total_spots }} bays</div></div>
+    <div class="kpi"><div class="lbl">Open bays</div><div class="val" id="k-free">—</div><div class="hint">resident + guest</div></div>
+    <div class="kpi"><div class="lbl">Pending passes</div><div class="val" id="pending-count">—</div><div class="hint">approve before they hit the gate</div></div>
+    <div class="kpi"><div class="lbl">30-day visitor take</div><div class="val" id="k-rev">—</div><div class="hint">FASTag <span id="k-fastag">—</span></div></div>
+  </section>
+  <section class="today-strip" id="today-strip">
+    <div class="cell"><div class="lbl">In today</div><b id="t-in">—</b><small>cars entered</small></div>
+    <div class="cell"><div class="lbl">Out today</div><b id="t-out">—</b><small>cars left</small></div>
+    <div class="cell"><div class="lbl">Avg stay</div><b id="t-avg">—</b><small>completed today</small></div>
+    <div class="cell"><div class="lbl">Fees collected</div><b id="t-fee">—</b><small>visitor exits today</small></div>
+    <div class="cell"><div class="lbl">Still inside</div><b id="t-live">—</b><small>on the compound</small></div>
+    <div class="cell"><div class="lbl">Bays left</div><b id="t-free">—</b><small>of {{ location.total_spots }}</small></div>
+    <div class="cell"><div class="lbl">Guest overstay</div><b id="t-over">—</b><small>visitors past 3h</small></div>
+  </section>
+  <section class="period-board" id="period-board">
+    <div class="period-card">
+      <h4>Today</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p1-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p1-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p1-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p1-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p1-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p1-fee">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 7 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p7-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p7-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p7-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p7-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p7-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p7-fee">—</b></div>
+      </div>
+    </div>
+    <div class="period-card">
+      <h4>Last 30 days</h4>
+      <div class="period-grid">
+        <div><div class="lbl">Cars in</div><b id="p30-in">—</b></div>
+        <div><div class="lbl">Cars left</div><b id="p30-out">—</b></div>
+        <div><div class="lbl">There now</div><b id="p30-here">—</b></div>
+        <div><div class="lbl">Overstay</div><b id="p30-over">—</b></div>
+        <div><div class="lbl">Avg stay</div><b id="p30-avg">—</b></div>
+        <div><div class="lbl">Fees</div><b id="p30-fee">—</b></div>
+      </div>
+    </div>
+  </section>
+  <div class="grid-split">
+    <div class="card gate">
+      <h3>Gate console</h3>
+      <input type="hidden" id="gate-loc" value="{{ location.id }}">
+      <input id="plate-input" placeholder="MH 12 AB 1234" maxlength="13" autocomplete="off">
+      <div class="lookup" id="lookup">Resident, approved guest, or unknown. Click a bay to inspect.</div>
+      <div class="gate-actions">
+        <button class="btn btn-go" id="btn-in">Allow in</button>
+        <button class="btn btn-stop" id="btn-out">Exit</button>
+        <button class="btn btn-yellow" id="btn-sim" type="button">Car at boom</button>
+      </div>
+      <p class="muted">Unknown plates stay out unless you override. That's the whole point of a society gate.</p>
+    </div>
+    <aside class="inspect" id="bay-inspect">
+      <h3>Bay</h3>
+      <div class="empty">Click a stall. Residents, guests, and empty bays all open here.</div>
+    </aside>
+  </div>
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card">
+      <h3>Expected today</h3>
+      <ul class="feed" id="today-visitors"></ul>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Bay map</h3><span class="muted">click a stall</span></div>
+      <div class="lot-board" id="slot-map"></div>
+      <div class="legend">
+        <span><i style="background:#e7f6ee"></i> free</span>
+        <span><i style="background:#1c1a17"></i> occupied</span>
+        <span><i style="background:#fbe8d8"></i> guest bay</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Visitor passes</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Visitor</th><th>Invited by</th><th>Plate</th><th>Purpose</th><th>Window</th><th>Status</th><th></th></tr></thead>
+        <tbody id="visitor-table"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card">
+      <h3>30 days</h3>
+      <div class="chart-box"><canvas id="daily-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Tape</h3>
+      <ul class="feed" id="feed"></ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Overstay — guests sitting too long</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Plate</th><th>Owner</th><th>Bay</th><th>Duration</th><th>Fee</th><th>Tag</th></tr></thead>
+        <tbody id="overstay-table"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Who is inside</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Plate</th><th>Owner</th><th>Bay</th><th>Duration</th><th>Fee</th><th>Tag</th></tr></thead>
+        <tbody id="parked-table"></tbody>
+      </table>
+    </div>
+  </div>
+  <span id="k-over" hidden>0</span>
+</div>
+{% endblock %}
