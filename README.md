@@ -1,4 +1,4 @@
-# ParkSetu
+# Smartpark
 
 Parking dashboard for malls and gated societies. Demo only.
 
